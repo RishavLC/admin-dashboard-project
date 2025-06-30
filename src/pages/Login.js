@@ -9,17 +9,18 @@ const Login = ({ setIsAuthenticated }) => {
   const navigate = useNavigate();
 
   const handleLogin = (values) => {
-    setLoading(true);
-    setTimeout(() => {
-      if (values.username === 'admin' && values.password === 'admin123') {
-        setIsAuthenticated(true);
-        navigate('/');
-      } else {
-        alert('Invalid credentials');
-      }
-      setLoading(false);
-    }, 1000);
-  };
+  setLoading(true);
+  setTimeout(() => {
+    if (values.username === 'admin' && values.password === 'admin123') {
+      localStorage.setItem('auth', 'true');
+      setIsAuthenticated(true);
+      navigate('/');
+    } else {
+      alert('Invalid credentials');
+    }
+    setLoading(false);
+  }, 1000);
+};
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
