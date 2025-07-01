@@ -9,26 +9,42 @@ const Login = ({ setIsAuthenticated }) => {
   const navigate = useNavigate();
 
   const handleLogin = (values) => {
-  setLoading(true);
-  setTimeout(() => {
-    if (values.username === 'admin' && values.password === 'admin123') {
-      localStorage.setItem('auth', 'true');
-      setIsAuthenticated(true);
-      navigate('/');
-    } else {
-      alert('Invalid credentials');
-    }
-    setLoading(false);
-  }, 1000);
-};
+    setLoading(true);
+    setTimeout(() => {
+      if (values.username === 'admin' && values.password === 'admin123') {
+        localStorage.setItem('auth', 'true');
+        setIsAuthenticated(true);
+        navigate('/');
+      } else {
+        alert('Invalid credentials');
+      }
+      setLoading(false);
+    }, 1000);
+  };
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
       <Card style={{ width: 300 }}>
         <Title level={3} style={{ textAlign: 'center' }}>Admin Login</Title>
-        <Form onFinish={handleLogin} layout="vertical">
-          <Form.Item name="username" label="Username" rules={[{ required: true }]}> <Input /> </Form.Item>
-          <Form.Item name="password" label="Password" rules={[{ required: true }]}> <Input.Password /> </Form.Item>
+        <Form
+          onFinish={handleLogin}
+          layout="vertical"
+          validateTrigger={['onChange', 'onBlur']}
+        >
+          <Form.Item
+            name="username"
+            label="Username"
+            rules={[{ required: true, message: 'Username is required' }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="password"
+            label="Password"
+            rules={[{ required: true, message: 'Password is required' }]}
+          >
+            <Input.Password />
+          </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={loading} block>
               Login
