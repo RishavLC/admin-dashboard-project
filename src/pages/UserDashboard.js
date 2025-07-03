@@ -1,18 +1,16 @@
-import { Layout } from 'antd';
-import Sidebar from '../components/Sidebar';
+import { useNavigate } from 'react-router-dom';
+import { Button } from 'antd';
 
-const { Sider, Content } = Layout;
+const UserDashboard = () => {
+  const navigate = useNavigate();
 
-const UserDashboard = ({ setIsAuthenticated }) => (
-  <Layout style={{ minHeight: '100vh' }}>
-    <Sider><Sidebar setIsAuthenticated={setIsAuthenticated} /></Sider>
-    <Layout>
-      <Content style={{ padding: '20px' }}>
-        <h1>User Dashboard</h1>
-        <p>Welcome! This is your user dashboard.</p>
-      </Content>
-    </Layout>
-  </Layout>
-);
+  return (
+    <div>
+      <h2>Welcome, User</h2>
+      <Button onClick={() => navigate('/contact')}>Go to Contact</Button>
+      <Button onClick={() => navigate('/profile')}>Go to Profile</Button>
+    </div>
+  );
+};
 
 export default UserDashboard;
