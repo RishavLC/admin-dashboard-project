@@ -19,6 +19,7 @@ const Login = ({ setIsAuthenticated }) => {
       if (isAdmin || isUser) {
         localStorage.setItem('auth', 'true');
         localStorage.setItem('role', role);
+        localStorage.setItem('username', username);
         setIsAuthenticated(true);
         navigate(role === 'admin' ? '/admin-dashboard' : '/user-dashboard');
       } else {
