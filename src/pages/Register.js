@@ -11,7 +11,7 @@ const Register = () => {
       alert('User already exists');
     } else {
       localStorage.setItem(`user_${username}`, password);
-      alert('Registration successful. Please login.');
+      alert('Registration successful! Please login.');
       navigate('/login');
     }
   };
@@ -20,14 +20,34 @@ const Register = () => {
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
       <Card style={{ width: 320 }}>
         <Title level={3} style={{ textAlign: 'center' }}>User Register</Title>
-        <Form onFinish={handleRegister} layout="vertical" validateTrigger={['onChange', 'onBlur']}>
-          <Form.Item name="username" label="Username" rules={[{ required: true, message: 'Username is required' }]}> <Input /> </Form.Item>
-          <Form.Item name="password" label="Password" rules={[{ required: true, message: 'Password is required' }]}> <Input.Password /> </Form.Item>
+        <Form
+          onFinish={handleRegister}
+          layout="vertical"
+          validateTrigger={['onChange', 'onBlur']}
+        >
+          <Form.Item
+            name="username"
+            label="Username"
+            rules={[{ required: true, message: 'Username is required' }]}
+          >
+            <Input placeholder="Enter username" />
+          </Form.Item>
+
+          <Form.Item
+            name="password"
+            label="Password"
+            rules={[{ required: true, message: 'Password is required' }]}
+          >
+            <Input.Password placeholder="Enter password" />
+          </Form.Item>
+
           <Form.Item>
             <Button type="primary" htmlType="submit" block>
               Register
             </Button>
-            <Button type="link" block onClick={() => navigate('/login')}>Back to Login</Button>
+            <Button type="link" block onClick={() => navigate('/login')}>
+              Back to Login
+            </Button>
           </Form.Item>
         </Form>
       </Card>
