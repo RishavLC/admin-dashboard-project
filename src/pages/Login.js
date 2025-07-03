@@ -12,17 +12,19 @@ const Login = ({ setIsAuthenticated }) => {
   const handleLogin = ({ username, password, role }) => {
     setLoading(true);
     setTimeout(() => {
-      if (
-        (role === 'admin' && username === 'admin' && password === 'admin123') ||
-        (role === 'user' && localStorage.getItem(`user_${username}`) === password)
-      ) {
+      const storedPassword = localStorage.getItem(`user_${username}`);
+      const isAdmin = role === 'admin' && username === 'admin' && password === 'admin123';
+      const isUser = role === 'user' && storedPassword === password;
+
+      if (isAdmin || isUser) {
         localStorage.setItem('auth', 'true');
         localStorage.setItem('role', role);
         setIsAuthenticated(true);
-        navigate(role === 'admin' ? './admin-dashboard' : './user-dashboard');
+        navigate(role === 'admin' ? '/admin-dashboard' : '/user-dashboard');
       } else {
         alert('Invalid credentials');
       }
+
       setLoading(false);
     }, 1000);
   };
@@ -32,19 +34,25 @@ const Login = ({ setIsAuthenticated }) => {
       <Card style={{ width: 320 }}>
         <Title level={3} style={{ textAlign: 'center' }}>Login</Title>
         <Form onFinish={handleLogin} layout="vertical" validateTrigger={['onChange', 'onBlur']}>
-          <Form.Item name="role" label="Login As" rules={[{ required: true }]}>
+          <Form.Item name="role" label="Login As" rules={[{ required: true, message: 'Role is required' }]}>
             <Select placeholder="Select role">
               <Option value="admin">Admin</Option>
               <Option value="user">User</Option>
             </Select>
           </Form.Item>
-          <Form.Item name="username" label="Username" rules={[{ required: true, message: 'Username is required' }]}> <Input /> </Form.Item>
-          <Form.Item name="password" label="Password" rules={[{ required: true, message: 'Password is required' }]}> <Input.Password /> </Form.Item>
+          <Form.Item name="username" label="Username" rules={[{ required: true, message: 'Username is required' }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="password" label="Password" rules={[{ required: true, message: 'Password is required' }]}>
+            <Input.Password />
+          </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={loading} block>
               Login
             </Button>
-            <Button type="link" block onClick={() => navigate('/register')}>Register</Button>
+            <Button type="link" block onClick={() => navigate('/register')}>
+              Register
+            </Button>
           </Form.Item>
         </Form>
       </Card>

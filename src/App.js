@@ -22,7 +22,7 @@ export default function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+        <Route path="/Login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
         <Route path="/register" element={<Register />} />
         <Route path="/admin-dashboard" element={<ProtectedRoute role="admin" element={<AdminDashboard setIsAuthenticated={setIsAuthenticated} />} />} />
         <Route path="/user-dashboard" element={<ProtectedRoute role="user" element={<UserDashboard setIsAuthenticated={setIsAuthenticated} />} />} />
