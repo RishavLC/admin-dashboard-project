@@ -8,15 +8,14 @@ import Reports from './pages/Reports';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Contact from './pages/Contact'; // Add this
-import Profile from './pages/Profile'; // Add this
+import { Contact } from './pages/Contact';
+import { Profile } from './pages/Profile';
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(
     () => localStorage.getItem('auth') === 'true'
   );
 
-  // Role-based route protection
   const ProtectedRoute = ({ element, role }) => {
     const isAuth = localStorage.getItem('auth') === 'true';
     const currentRole = localStorage.getItem('role');
@@ -30,7 +29,6 @@ export default function App() {
   return (
     <Router>
       <Routes>
-        {/* Public routes */}
         <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
         <Route path="/register" element={<Register />} />
 
