@@ -5,6 +5,7 @@ export const Profile = ({ setIsAuthenticated }) => {
     <div style={{ padding: '2rem' }}>
       <h2>User Profile</h2>
       <p>Welcome, <strong>{username}</strong>! This is your profile page.</p>
+      hiii
     </div>
   );
 };
