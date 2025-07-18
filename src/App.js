@@ -5,13 +5,13 @@ import {
   Navigate,
 } from "react-router-dom";
 import { useState } from "react";
-import AdminLayout from "./pages/AdminDashboard";
+import AdminLayout from "./pages/AdminDashboard"; // Admin Layout (sidebar + outlet)
+import AdminDashboard from "./pages/Dashboard"; // Charts Dashboard Page
 import UserDashboard from "./pages/UserDashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import { Profile } from "./pages/Profile";
 import Users from "./pages/Users";
-
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(
     () => localStorage.getItem("auth") === "true"
@@ -36,21 +36,30 @@ export default function App() {
           element={<Login setIsAuthenticated={setIsAuthenticated} />}
         />
         <Route path="/register" element={<Register />} />
-        <Route path="/admin-dashboard/users" element={<Users />} />
-        {/* Admin */}
+
+        {/* Admin layout */}
         <Route
           path="/admin-dashboard/*"
-          element={<ProtectedRoute role="admin" element={<AdminLayout />} />}
-        />
+          element={
+            <ProtectedRoute role="admin" element={<AdminLayout />} />
+          }
+        >
+          <Route index element={<AdminDashboard />} /> {/* default dashboard */}
+          <Route path="users" element={<Users />} />
+        </Route>
 
-        {/* User */}
+        {/* User layout */}
         <Route
           path="/user-dashboard"
-          element={<ProtectedRoute role="user" element={<UserDashboard />} />}
+          element={
+            <ProtectedRoute role="user" element={<UserDashboard />} />
+          }
         />
         <Route
           path="/profile"
-          element={<ProtectedRoute role="user" element={<Profile />} />}
+          element={
+            <ProtectedRoute role="user" element={<Profile />} />
+          }
         />
       </Routes>
     </Router>
