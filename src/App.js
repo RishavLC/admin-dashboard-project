@@ -29,6 +29,9 @@ export default function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/users" element={<Users />} />
+
+        <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
         <Route path="/register" element={<Register />} />
 
