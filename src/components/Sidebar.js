@@ -1,24 +1,27 @@
-import { Menu } from 'antd';
+import { Layout, Menu } from 'antd';
 import { DashboardOutlined, UserOutlined, SettingOutlined, FileTextOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
-const Sidebar = () => {
-  const navigate = useNavigate();
+const { Sider } = Layout;
 
-  return (
-    <Menu
-      mode="vertical"
-      theme="dark"
-      onClick={(e) => navigate(e.key)}
-      items={[
-        { key: '/', icon: <DashboardOutlined />, label: 'Dashboard' },
-        { key: '/users', icon: <UserOutlined />, label: 'Users' },
-        { key: '/services', icon: <SettingOutlined />, label: 'Services' },
-        { key: '/reports', icon: <FileTextOutlined />, label: 'Reports' },
-        { key: '/settings', icon: <SettingOutlined />, label: 'Settings' },
-      ]}
-    />
-  );
-};
+const Sidebar = () => (
+  <Sider breakpoint="lg" collapsedWidth="0">
+    <div style={{ color: 'white', margin: '16px', fontSize: '22px', textAlign: 'center' }}>Admin Panel</div>
+    <Menu theme="dark" mode="inline">
+      <Menu.Item key="1" icon={<DashboardOutlined />}>
+        <Link to="/dashboard">Dashboard</Link>
+      </Menu.Item>
+      <Menu.Item key="2" icon={<UserOutlined />}>
+        <Link to="/users">Users</Link>
+      </Menu.Item>
+      <Menu.Item key="3" icon={<SettingOutlined />}>
+        <Link to="/config">Configuration</Link>
+      </Menu.Item>
+      <Menu.Item key="4" icon={<FileTextOutlined />}>
+        <Link to="/reports">Reports</Link>
+      </Menu.Item>
+    </Menu>
+  </Sider>
+);
 
 export default Sidebar;
