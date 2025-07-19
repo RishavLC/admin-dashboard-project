@@ -12,6 +12,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import { Profile } from "./pages/Profile";
 import Users from "./pages/Users";
+import Config from "./pages/Config";
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(
     () => localStorage.getItem("auth") === "true"
@@ -47,6 +48,7 @@ export default function App() {
           <Route index element={<AdminDashboard />} /> {/* default dashboard */}
           <Route path="users" element={<Users />} />
         </Route>
+        <Route path="config" element={<Config />} />
 
         {/* User layout */}
         <Route

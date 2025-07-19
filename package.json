@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
+    "@rjsf/core": "^5.24.12",
     "antd": "^5.26.5",
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",
