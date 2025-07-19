@@ -1,5 +1,9 @@
 import { Card, message } from 'antd';
-import Form from '@rjsf/core';
+import { withTheme } from '@rjsf/core';
+import { Theme as AntDTheme } from '@rjsf/antd';
+import validator from '@rjsf/validator-ajv8';
+
+const ThemedForm = withTheme(AntDTheme);
 
 const schema = {
   title: "System Configuration",
@@ -28,7 +32,7 @@ const schema = {
 const uiSchema = {
   companyName: { "ui:placeholder": "Enter your company name" },
   bookingLimit: { "ui:widget": "updown" },
-  theme: { "ui:widget": "select" },
+  theme: { "ui:widget": "select" }
 };
 
 const Config = () => {
@@ -40,7 +44,7 @@ const Config = () => {
 
   return (
     <Card title="System Configuration" style={{ margin: 20 }}>
-      <Form schema={schema} uiSchema={uiSchema} onSubmit={handleSubmit} />
+      <ThemedForm schema={schema} uiSchema={uiSchema} validator={validator} onSubmit={handleSubmit} />
     </Card>
   );
 };
