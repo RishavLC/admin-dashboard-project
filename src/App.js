@@ -50,7 +50,7 @@ export default function App() {
           <Route index element={<AdminDashboard />} /> {/* default dashboard */}
           <Route path="users" element={<Users />} />
           <Route path="config" element={<Config />} />
-          <Route path="/audit-log" element={<AuditLog />} />
+          <Route path="audit-log" element={<AuditLog />} />
 
         </Route>
 
