@@ -14,9 +14,9 @@ const AdminLayout = () => {
         <div style={{ color: 'white', margin: 16, fontWeight: 'bold', textAlign: 'center' }}>Admin</div>
         <Menu theme="dark" mode="inline">
           <Menu.Item key="1" icon={<DashboardOutlined />}><Link to="">Dashboard</Link></Menu.Item>
-          <Menu.Item key="2" icon={<UserOutlined />}><Link to="users">Users</Link></Menu.Item>
-          <Menu.Item key="3" icon={<SettingOutlined />}><Link to="config">Configuration</Link></Menu.Item>
-          <Menu.Item key="4" icon={<FileTextOutlined />}><Link to="reports">Reports</Link></Menu.Item>
+          <Menu.Item key="2" icon={<UserOutlined />}><Link to="/admin-dashboard/users">Users</Link></Menu.Item>
+          <Menu.Item key="3" icon={<SettingOutlined />}><Link to="/admin-dashboard/config">Configuration</Link></Menu.Item>
+          <Menu.Item key="4" icon={<FileTextOutlined />}><Link to="/admin-dashboard/reports">Reports</Link></Menu.Item>
         </Menu>
       </Sider>
       <Layout>
