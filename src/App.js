@@ -13,6 +13,7 @@ import Register from "./pages/Register";
 import { Profile } from "./pages/Profile";
 import Users from "./pages/Users";
 import Config from './pages/Config';
+import AuditLog from "./pages/AuditLog";
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(
@@ -49,6 +50,8 @@ export default function App() {
           <Route index element={<AdminDashboard />} /> {/* default dashboard */}
           <Route path="users" element={<Users />} />
           <Route path="config" element={<Config />} />
+          <Route path="/audit-log" element={<AuditLog />} />
+
         </Route>
 
         {/* User layout */}

@@ -20,6 +20,10 @@ const Sidebar = () => (
       <Menu.Item key="4" icon={<FileTextOutlined />}>
         <Link to="/reports">Reports</Link>
       </Menu.Item>
+      <Menu.Item key="5" icon={<></>}>
+        <Link to="/admin-dashboard/audit-log">Audit Log</Link>
+      </Menu.Item>
+
     </Menu>
   </Sider>
 );
