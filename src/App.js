@@ -14,7 +14,7 @@ import { Profile } from "./pages/Profile";
 import Users from "./pages/Users";
 import Config from './pages/Config';
 import AuditLog from "./pages/AuditLog";
-
+import Reports from "./pages/Reports";
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(
     () => localStorage.getItem("auth") === "true"
@@ -51,6 +51,7 @@ export default function App() {
           <Route path="users" element={<Users />} />
           <Route path="config" element={<Config />} />
           <Route path="audit-log" element={<AuditLog />} />
+          <Route path="reports" element={<Reports />} />
 
         </Route>
 
