@@ -1,9 +1,5 @@
 import { Card, message } from 'antd';
-import { withTheme } from '@rjsf/core';
-import { Theme as AntDTheme } from '@rjsf/antd';
-import validator from '@rjsf/validator-ajv8';
-
-const ThemedForm = withTheme(AntDTheme);
+import Form from '@rjsf/core';
 
 const schema = {
   title: "System Configuration",
@@ -18,12 +14,12 @@ const schema = {
       title: "Theme Color",
       enum: ["Light", "Dark", "Blue"]
     },
-    settings: {
+    advanced: {
       type: "object",
       title: "Advanced Settings",
       properties: {
         allowGuestBooking: { type: "boolean", title: "Allow Guest Booking", default: false },
-        maxGuestsPerBooking: { type: "number", title: "Max Guests Per Booking", default: 5 }
+        maxGuests: { type: "number", title: "Max Guests per Booking", default: 5 }
       }
     }
   }
@@ -32,19 +28,19 @@ const schema = {
 const uiSchema = {
   companyName: { "ui:placeholder": "Enter your company name" },
   bookingLimit: { "ui:widget": "updown" },
-  theme: { "ui:widget": "select" }
+  theme: { "ui:widget": "select" },
 };
 
 const Config = () => {
   const handleSubmit = ({ formData }) => {
-    console.log("Settings Saved:", formData);
-    message.success("Configuration Saved!");
+    console.log("Configuration Saved:", formData);
     localStorage.setItem("system_config", JSON.stringify(formData));
+    message.success("Settings Saved Successfully!");
   };
 
   return (
     <Card title="System Configuration" style={{ margin: 20 }}>
-      <ThemedForm schema={schema} uiSchema={uiSchema} validator={validator} onSubmit={handleSubmit} />
+      <Form schema={schema} uiSchema={uiSchema} onSubmit={handleSubmit} />
     </Card>
   );
 };
