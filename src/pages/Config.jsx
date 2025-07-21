@@ -2,44 +2,46 @@ import { Card, message } from 'antd';
 import Form from '@rjsf/core';
 
 const schema = {
-  title: "System Configuration",
+  title: "Booking System Configuration",
   type: "object",
-  required: ["companyName", "bookingLimit"],
+  required: ["companyName", "maxDailyBookings"],
   properties: {
     companyName: { type: "string", title: "Company Name" },
-    bookingLimit: { type: "number", title: "Booking Limit Per Day", default: 10 },
-    enableEmail: { type: "boolean", title: "Enable Email Notifications", default: true },
+    maxDailyBookings: { type: "number", title: "Max Bookings Per Day", default: 20 },
+    enableNotifications: { type: "boolean", title: "Enable Notifications", default: true },
+    bookingWindowDays: { type: "number", title: "Booking Window (days)", default: 30 },
     theme: {
       type: "string",
-      title: "Theme Color",
-      enum: ["Light", "Dark", "Blue"]
+      title: "Theme Preference",
+      enum: ["Light", "Dark", "Corporate Blue"]
     },
-    advanced: {
+    paymentSettings: {
       type: "object",
-      title: "Advanced Settings",
+      title: "Payment Settings",
       properties: {
-        allowGuestBooking: { type: "boolean", title: "Allow Guest Booking", default: false },
-        maxGuests: { type: "number", title: "Max Guests per Booking", default: 5 }
+        enableOnlinePayments: { type: "boolean", title: "Enable Online Payments", default: true },
+        paymentGateway: { type: "string", title: "Payment Gateway", enum: ["Stripe", "PayPal", "Razorpay"] }
       }
     }
   }
 };
 
 const uiSchema = {
-  companyName: { "ui:placeholder": "Enter your company name" },
-  bookingLimit: { "ui:widget": "updown" },
-  theme: { "ui:widget": "select" },
+  companyName: { "ui:placeholder": "Enter business name" },
+  paymentSettings: {
+    paymentGateway: { "ui:widget": "select" }
+  }
 };
 
 const Config = () => {
   const handleSubmit = ({ formData }) => {
-    console.log("Configuration Saved:", formData);
-    localStorage.setItem("system_config", JSON.stringify(formData));
-    message.success("Settings Saved Successfully!");
+    console.log("Saved Configuration:", formData);
+    localStorage.setItem("booking_config", JSON.stringify(formData));
+    message.success("Configuration saved!");
   };
 
   return (
-    <Card title="System Configuration" style={{ margin: 20 }}>
+    <Card title="Booking System Configuration" style={{ margin: 20 }}>
       <Form schema={schema} uiSchema={uiSchema} onSubmit={handleSubmit} />
     </Card>
   );
