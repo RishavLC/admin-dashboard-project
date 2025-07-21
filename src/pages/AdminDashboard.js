@@ -18,6 +18,8 @@ const AdminLayout = () => {
           <Menu.Item key="3" icon={<SettingOutlined />}><Link to="/admin-dashboard/config">Configuration</Link></Menu.Item>
           <Menu.Item key="4" icon={<FileSearchOutlined/>}><Link to="/admin-dashboard/audit-log">Audit Log</Link></Menu.Item>
           <Menu.Item key="5" icon={<FileTextOutlined />}><Link to="/admin-dashboard/reports">Reports</Link></Menu.Item>
+          <Menu.Item key="3" icon={<CalendarOutlined />}><Link to="/admin-dashboard/booking">Booking</Link></Menu.Item>
+
         </Menu>
       </Sider>
       <Layout>

@@ -23,6 +23,9 @@ const Sidebar = () => (
       <Menu.Item key="5" icon={<></>}>
         <Link to="/admin-dashboard/audit-log">Audit Log</Link>
       </Menu.Item>
+      <Menu.Item key="3">
+        <Link to="/booking">Book Hotel</Link>
+      </Menu.Item>
 
     </Menu>
   </Sider>
