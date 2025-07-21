@@ -1,5 +1,6 @@
 import { Card, message } from 'antd';
 import Form from '@rjsf/core';
+import validator from '@rjsf/validator-ajv8';
 
 const schema = {
   title: "Booking System Configuration",
@@ -42,7 +43,7 @@ const Config = () => {
 
   return (
     <Card title="Booking System Configuration" style={{ margin: 20 }}>
-      <Form schema={schema} uiSchema={uiSchema} onSubmit={handleSubmit} />
+      <Form schema={schema} uiSchema={uiSchema} validator={validator} onSubmit={handleSubmit} />
     </Card>
   );
 };
