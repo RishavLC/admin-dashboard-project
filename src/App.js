@@ -12,7 +12,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import { Profile } from "./pages/Profile";
 import Users from "./pages/Users";
-import Config from './pages/Config';
+import Config from "./pages/Config";
 import AuditLog from "./pages/AuditLog";
 import Reports from "./pages/Reports";
 import Booking from "./pages/Booking";
@@ -45,32 +45,25 @@ export default function App() {
         {/* Admin layout */}
         <Route
           path="/admin-dashboard/*"
-          element={
-            <ProtectedRoute role="admin" element={<AdminLayout />} />
-          }
+          element={<ProtectedRoute role="admin" element={<AdminLayout />} />}
         >
           <Route index element={<AdminDashboard />} /> {/* default dashboard */}
           <Route path="users" element={<Users />} />
           <Route path="config" element={<Config />} />
           <Route path="audit-log" element={<AuditLog />} />
           <Route path="reports" element={<Reports />} />
-          <Route path="/booking" element={<Booking />} />
-
-
         </Route>
 
         {/* User layout */}
         <Route
-          path="/user-dashboard"
-          element={
-            <ProtectedRoute role="user" element={<UserDashboard />} />
-          }
-        />
+          path="/user-dashboard/*"
+          element={<ProtectedRoute role="user" element={<UserDashboard />} />}
+        >
+          <Route path="booking" element={<Booking />} />
+        </Route>
         <Route
           path="/profile"
-          element={
-            <ProtectedRoute role="user" element={<Profile />} />
-          }
+          element={<ProtectedRoute role="user" element={<Profile />} />}
         />
       </Routes>
     </Router>
