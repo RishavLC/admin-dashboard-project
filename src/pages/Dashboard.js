@@ -20,7 +20,7 @@ const serviceDistribution = [
   { name: 'Tour', value: 25 },
 ];
 
-const Dashboard = () => (
+const AdminDashboard = () => (
   <div>
     <Row gutter={16}>
       <Col span={12}>
@@ -61,4 +61,4 @@ const Dashboard = () => (
   </div>
 );
 
-export default Dashboard;
+export default AdminDashboard;

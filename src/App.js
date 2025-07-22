@@ -60,12 +60,10 @@ export default function App() {
           path="/user-dashboard/*"
           element={<ProtectedRoute role="user" element={<UserDashboard />} />}
         >
+          <Route path="profile" element={<Profile />} />
           <Route path="booking" element={<Booking />} />
         </Route>
-        <Route
-          path="/profile"
-          element={<ProtectedRoute role="user" element={<Profile />} />}
-        />
+
       </Routes>
     </Router>
   );
