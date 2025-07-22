@@ -1,13 +1,20 @@
 import { Layout, Menu } from 'antd';
-import { Link, Outlet } from 'react-router-dom';
-import { DashboardOutlined, UserOutlined, SettingOutlined, FileTextOutlined, CalendarOutlined, FileSearchOutlined } from '@ant-design/icons';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { DashboardOutlined, UserOutlined, LogoutOutlined, SettingOutlined, FileTextOutlined, CalendarOutlined, FileSearchOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 
 const { Sider, Header, Content } = Layout;
 
 const AdminLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
-
+  const navigate = useNavigate();
+  
+  const logout = () => {
+    localStorage.removeItem('auth');
+    localStorage.removeItem('role');
+    localStorage.removeItem('username');
+    navigate('/login');
+  };
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
@@ -18,8 +25,9 @@ const AdminLayout = () => {
           <Menu.Item key="3" icon={<SettingOutlined />}><Link to="/admin-dashboard/config">Configuration</Link></Menu.Item>
           <Menu.Item key="4" icon={<FileSearchOutlined/>}><Link to="/admin-dashboard/audit-log">Audit Log</Link></Menu.Item>
           <Menu.Item key="5" icon={<FileTextOutlined />}><Link to="/admin-dashboard/reports">Reports</Link></Menu.Item>
-          <Menu.Item key="3" icon={<CalendarOutlined />}><Link to="/admin-dashboard/booking">Booking</Link></Menu.Item>
-
+          <Menu.Item key="4" icon={<LogoutOutlined />} onClick={logout}>
+            Logout
+          </Menu.Item>
         </Menu>
       </Sider>
       <Layout>
