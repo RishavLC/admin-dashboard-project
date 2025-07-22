@@ -14,16 +14,16 @@ const UserDashboard = () => {
 
   useEffect(() => {
     const username = localStorage.getItem('username');
-let user = null;
-try {
-  const storedUser = localStorage.getItem(`user_${username}`);
-  if (storedUser) {
-    user = JSON.parse(storedUser);
-  }
-} catch (error) {
-  console.error("Invalid user data in localStorage", error);
-}
-
+    let userData = null;
+    try {
+      const storedUser = localStorage.getItem(`user_${username}`);
+      if (storedUser) {
+        userData = JSON.parse(storedUser);
+      }
+    } catch (error) {
+      console.error("Invalid user data in localStorage", error);
+    }
+    setUser(userData);  // ✅ you missed this line
   }, []);
 
   const handleLogout = () => {
