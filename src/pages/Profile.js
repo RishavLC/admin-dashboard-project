@@ -1,47 +1,73 @@
-import { Card, Form, Input, Button, List, message } from 'antd';
-import { useState } from 'react';
+import React, { useState, useEffect } from "react";
 
-export const Profile = () => {
-  const username = localStorage.getItem('username');
-  const [password, setPassword] = useState(localStorage.getItem(`user_${username}`) || '');
+export function Profile() {
+  const username = localStorage.getItem("username") || "User";
+  const [newPassword, setNewPassword] = useState("");
+  const [bookingHistory, setBookingHistory] = useState([]);
 
-  const updatePassword = (values) => {
-    localStorage.setItem(`user_${username}`, values.password);
-    setPassword(values.password);
-    message.success('Password updated successfully!');
+useEffect(() => {
+  const storedBooking = localStorage.getItem("bookings"); // ✅ Correct key
+  if (storedBooking) {
+    const allBookings = JSON.parse(storedBooking);
+    const userBookings = allBookings.filter(
+      (b) => b.username === username
+    );
+    setBookingHistory(userBookings); // Only show current user's bookings
+  }
+}, []);
+
+
+  const handlePasswordUpdate = () => {
+    if (newPassword.trim() === "") {
+      alert("Password cannot be empty!");
+      return;
+    }
+    // Simulate password update
+    localStorage.setItem("password", newPassword);
+    alert("Password updated successfully!");
+    setNewPassword(""); // clear input field
   };
 
-  // // Example mock booking history
-  // const bookings = [
-  //   { id: 1, service: 'Hotel Booking', date: '2024-07-15', amount: '$200' },
-  //   { id: 2, service: 'Flight Ticket', date: '2024-07-18', amount: '$450' },
-  // ];
-  const allBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-  const bookings = allBookings.filter(b => b.username === username);
-
   return (
-    <Card title={`Profile: ${username}`} style={{ margin: 20 }}>
-      <Form onFinish={updatePassword} layout="vertical" initialValues={{ password }}>
-        <Form.Item
-          label="Update Password"
-          name="password"
-          rules={[{ required: true, message: 'Please enter a password' }]}
-        >
-          <Input.Password />
-        </Form.Item>
-        <Button type="primary" htmlType="submit">Update Password</Button>
-      </Form>
+    <div style={{ padding: "2rem" }}>
+      <h2>Welcome, {username}!</h2>
 
-      <h3 style={{ marginTop: 30 }}>Booking History</h3>
-      <List
-        bordered
-        dataSource={bookings}
-        renderItem={item => (
-          <List.Item>
-            <b>{item.service}</b> - {item.date} - {item.amount}
-          </List.Item>
+      <div style={{ marginTop: "2rem" }}>
+        <h3>Profile: {username}</h3>
+        <label>
+          <strong>* Update Password</strong>
+        </label>
+        <br />
+        <input
+          type="password"
+          value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)}
+          placeholder="Enter new password"
+          style={{ width: "300px", padding: "8px", marginTop: "8px" }}
+        />
+        <br />
+        <button
+          onClick={handlePasswordUpdate}
+          style={{ marginTop: "10px", padding: "8px 16px" }}
+        >
+          Update Password
+        </button>
+      </div>
+
+      <div style={{ marginTop: "2rem" }}>
+        <h3>Booking History</h3>
+        {bookingHistory.length === 0 ? (
+          <p>No bookings yet.</p>
+        ) : (
+          <ul>
+            {bookingHistory.map((b, index) => (
+              <li key={index}>
+                {b.date} - {b.code}
+              </li>
+            ))}
+          </ul>
         )}
-      />
-    </Card>
+      </div>
+    </div>
   );
-};
+}

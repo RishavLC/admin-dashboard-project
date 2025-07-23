@@ -16,52 +16,39 @@ const UserDashboard = () => {
   const location = useLocation();
   const [user, setUser] = useState(null);
 
-  // Mock user data setup (you can remove this in production)
-  const userData = {
-    username: 'rishav',
-    bookings: [
-      { hotel: 'Hotel Everest', date: '2025-07-21', amount: 120 },
-      { hotel: 'Hotel Annapurna', date: '2025-07-20', amount: 90 }
-    ],
-    totalSpent: 210
-  };
-  localStorage.setItem('username', 'rishav');
-  localStorage.setItem('user_rishav', JSON.stringify(userData));
-
   useEffect(() => {
     const username = localStorage.getItem('username');
     if (!username) {
-      message.error("User not logged in!");
+      message.error('User not logged in!');
       navigate('/login');
       return;
     }
-
     try {
-      const storedUser = localStorage.getItem(`user_${username}`);
-      if (storedUser) {
-        const parsed = JSON.parse(storedUser);
-        setUser(parsed);
-      } else {
-        message.error("User data not found!");
+      const storedUser = JSON.parse(localStorage.getItem(`user_${username}`));
+      if (!storedUser) {
+        message.error('User data not found!');
+        navigate('/login');
+        return;
       }
+      setUser(storedUser);
     } catch (error) {
-      console.error("Failed to parse user data", error);
-      message.error("Error loading user data.");
+      message.error('Failed to load user data.');
+      navigate('/login');
     }
   }, [navigate]);
 
   const handleLogout = () => {
-    localStorage.removeItem('username');
     localStorage.removeItem('auth');
+    localStorage.removeItem('username');
     localStorage.removeItem('role');
     navigate('/login');
   };
 
-  const getSelectedKey = () => {
+  const selectedKey = (() => {
     if (location.pathname.includes('/booking')) return '2';
     if (location.pathname.includes('/profile')) return '3';
-    return '1'; // default to dashboard
-  };
+    return '1';
+  })();
 
   if (!user) return <div style={{ padding: 20 }}>Loading...</div>;
 
@@ -72,7 +59,7 @@ const UserDashboard = () => {
           <Avatar size={64} icon={<UserOutlined />} />
           <div style={{ marginTop: 10 }}>{user.username}</div>
         </div>
-        <Menu theme="dark" mode="inline" selectedKeys={[getSelectedKey()]}>
+        <Menu theme="dark" mode="inline" selectedKeys={[selectedKey]}>
           <Menu.Item key="1" icon={<DashboardOutlined />}>
             <Link to="/user-dashboard">Dashboard</Link>
           </Menu.Item>
