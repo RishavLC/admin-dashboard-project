@@ -59,13 +59,27 @@ useEffect(() => {
         {bookingHistory.length === 0 ? (
           <p>No bookings yet.</p>
         ) : (
-          <ul>
-            {bookingHistory.map((b, index) => (
-              <li key={index}>
-                {b.date} - {b.code}
-              </li>
-            ))}
-          </ul>
+ <table border="1" style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px" }}>
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Hotel</th>
+      <th>Amount ($)</th>
+      <th>Category</th>
+    </tr>
+  </thead>
+  <tbody>
+    {bookingHistory.map((b, index) => (
+      <tr key={index}>
+        <td>{b.date}</td>
+        <td>{b.hotel}</td>
+        <td>{b.amount}</td>
+        <td>{b.category}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+
         )}
       </div>
     </div>
