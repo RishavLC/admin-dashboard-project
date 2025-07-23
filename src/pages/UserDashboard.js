@@ -1,37 +1,69 @@
-import { Layout, Menu, Card, Statistic, List, Avatar } from 'antd';
+import { Layout, Menu, Card, Statistic, List, Avatar, message } from 'antd';
 import {
-  DashboardOutlined, BookOutlined, ProfileOutlined,
-  LogoutOutlined, UserOutlined
+  DashboardOutlined,
+  BookOutlined,
+  ProfileOutlined,
+  LogoutOutlined,
+  UserOutlined
 } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, Outlet, useLocation } from 'react-router-dom';
 
 const { Sider, Header, Content } = Layout;
 
 const UserDashboard = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [user, setUser] = useState(null);
+
+  // Mock user data setup (you can remove this in production)
+  const userData = {
+    username: 'rishav',
+    bookings: [
+      { hotel: 'Hotel Everest', date: '2025-07-21', amount: 120 },
+      { hotel: 'Hotel Annapurna', date: '2025-07-20', amount: 90 }
+    ],
+    totalSpent: 210
+  };
+  localStorage.setItem('username', 'rishav');
+  localStorage.setItem('user_rishav', JSON.stringify(userData));
 
   useEffect(() => {
     const username = localStorage.getItem('username');
-    let userData = null;
+    if (!username) {
+      message.error("User not logged in!");
+      navigate('/login');
+      return;
+    }
+
     try {
       const storedUser = localStorage.getItem(`user_${username}`);
       if (storedUser) {
-        userData = JSON.parse(storedUser);
+        const parsed = JSON.parse(storedUser);
+        setUser(parsed);
+      } else {
+        message.error("User data not found!");
       }
     } catch (error) {
-      console.error("Invalid user data in localStorage", error);
+      console.error("Failed to parse user data", error);
+      message.error("Error loading user data.");
     }
-    setUser(userData);  // ✅ you missed this line
-  }, []);
+  }, [navigate]);
 
   const handleLogout = () => {
-    localStorage.clear();
+    localStorage.removeItem('username');
+    localStorage.removeItem('auth');
+    localStorage.removeItem('role');
     navigate('/login');
   };
 
-  if (!user) return <div>Loading...</div>;
+  const getSelectedKey = () => {
+    if (location.pathname.includes('/booking')) return '2';
+    if (location.pathname.includes('/profile')) return '3';
+    return '1'; // default to dashboard
+  };
+
+  if (!user) return <div style={{ padding: 20 }}>Loading...</div>;
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -40,15 +72,15 @@ const UserDashboard = () => {
           <Avatar size={64} icon={<UserOutlined />} />
           <div style={{ marginTop: 10 }}>{user.username}</div>
         </div>
-        <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
+        <Menu theme="dark" mode="inline" selectedKeys={[getSelectedKey()]}>
           <Menu.Item key="1" icon={<DashboardOutlined />}>
             <Link to="/user-dashboard">Dashboard</Link>
           </Menu.Item>
           <Menu.Item key="2" icon={<BookOutlined />}>
-            <Link to="/user-dashboard/bookings">My Bookings</Link>
+            <Link to="/user-dashboard/booking">My Bookings</Link>
           </Menu.Item>
           <Menu.Item key="3" icon={<ProfileOutlined />}>
-            <Link to="/profile">My Profile</Link>
+            <Link to="/user-dashboard/profile">My Profile</Link>
           </Menu.Item>
           <Menu.Item key="4" icon={<LogoutOutlined />} onClick={handleLogout}>
             Logout
@@ -62,30 +94,36 @@ const UserDashboard = () => {
         </Header>
 
         <Content style={{ margin: 16 }}>
-          <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
-            <Card style={{ flex: 1 }}>
-              <Statistic title="Total Bookings" value={user.bookings?.length || 0} />
-            </Card>
-            <Card style={{ flex: 1 }}>
-              <Statistic title="Total Spent" value={user.totalSpent || 0} prefix="$" />
-            </Card>
-          </div>
+          {location.pathname === '/user-dashboard' ? (
+            <>
+              <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+                <Card style={{ flex: 1 }}>
+                  <Statistic title="Total Bookings" value={user.bookings?.length || 0} />
+                </Card>
+                <Card style={{ flex: 1 }}>
+                  <Statistic title="Total Spent" value={user.totalSpent || 0} prefix="$" />
+                </Card>
+              </div>
 
-          <Card style={{ marginTop: 24 }} title="Recent Bookings">
-            <List
-              itemLayout="horizontal"
-              dataSource={user.bookings || []}
-              renderItem={(item) => (
-                <List.Item>
-                  <List.Item.Meta
-                    avatar={<Avatar icon={<BookOutlined />} />}
-                    title={item.hotel}
-                    description={`Date: ${item.date} | Amount: $${item.amount}`}
-                  />
-                </List.Item>
-              )}
-            />
-          </Card>
+              <Card style={{ marginTop: 24 }} title="Recent Bookings">
+                <List
+                  itemLayout="horizontal"
+                  dataSource={user.bookings || []}
+                  renderItem={(item, index) => (
+                    <List.Item key={index}>
+                      <List.Item.Meta
+                        avatar={<Avatar icon={<BookOutlined />} />}
+                        title={item.hotel}
+                        description={`Date: ${item.date} | Amount: $${item.amount}`}
+                      />
+                    </List.Item>
+                  )}
+                />
+              </Card>
+            </>
+          ) : (
+            <Outlet />
+          )}
         </Content>
       </Layout>
     </Layout>
