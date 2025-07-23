@@ -1,20 +1,31 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Table, Button, Modal, Form, Input, message, Space, List } from 'antd';
+import {
+  Table,
+  Button,
+  Modal,
+  Form,
+  Input,
+  message,
+  Space,
+  List,
+  Popconfirm
+} from 'antd';
 
-// Mock Activity Logs (you can connect this to your real data later)
+// Mock Activity Logs
 const getActivityLogs = (username) => [
   `Logged in on ${new Date().toLocaleDateString()}`,
   `Updated profile`,
-  `Logged out`,
-  `Password changed`
+  `Logged out`
 ];
 
 const Users = () => {
   const [users, setUsers] = useState([]);
-  const [editingUser, setEditingUser] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [activityLogs, setActivityLogs] = useState([]);
+  const [logModalUser, setLogModalUser] = useState(null);
+  const [editPasswordUser, setEditPasswordUser] = useState(null);
+  const [passwordForm] = Form.useForm();
 
   useEffect(() => {
     loadUsers();
@@ -37,60 +48,74 @@ const Users = () => {
   };
 
   const bulkDelete = () => {
-    selectedRowKeys.forEach(username => localStorage.removeItem(`user_${username}`));
-    setUsers(prev => prev.filter(user => !selectedRowKeys.includes(user.username)));
-    setSelectedRowKeys([]);
-    message.success('Selected users deleted!');
-  };
-
-  const onFinishEdit = ({ password }) => {
-    localStorage.setItem(`user_${editingUser.username}`, password);
-    setUsers(prev => prev.map(user => user.username === editingUser.username ? { ...user, password } : user));
-    setEditingUser(null);
-    message.success('User updated!');
+    Modal.confirm({
+      title: 'Confirm Bulk Deletion',
+      content: `Are you sure you want to delete selected users?`,
+      okText: 'Yes',
+      cancelText: 'No',
+      onOk: () => {
+        selectedRowKeys.forEach(username => localStorage.removeItem(`user_${username}`));
+        setUsers(prev => prev.filter(user => !selectedRowKeys.includes(user.username)));
+        setSelectedRowKeys([]);
+        message.success('Selected users deleted!');
+      }
+    });
   };
 
   const filteredUsers = useMemo(() => {
-    return users.filter(user => user.username.toLowerCase().includes(searchText.toLowerCase()));
+    return users.filter(user =>
+      user.username.toLowerCase().includes(searchText.toLowerCase())
+    );
   }, [users, searchText]);
+
+  const openActivityModal = (username) => {
+    setLogModalUser(username);
+    setActivityLogs(getActivityLogs(username));
+  };
+
+  const openEditPasswordModal = (user) => {
+    setEditPasswordUser(user);
+    passwordForm.setFieldsValue({ newPassword: '' });
+  };
+
+  const handlePasswordUpdate = () => {
+    passwordForm.validateFields().then(values => {
+      localStorage.setItem(`user_${editPasswordUser.username}`, values.newPassword);
+      message.success(`Password updated for ${editPasswordUser.username}`);
+      setEditPasswordUser(null);
+      loadUsers();
+    });
+  };
 
   const columns = [
     {
       title: 'Username',
       dataIndex: 'username',
-      sorter: (a, b) => a.username.localeCompare(b.username),
+      sorter: (a, b) => a.username.localeCompare(b.username)
     },
     {
       title: 'Password',
       dataIndex: 'password',
-      render: (text, record) => (
-        <Form
-          onFinish={(values) => onFinishEdit({ ...values, username: record.username })}
-          initialValues={{ password: text }}
-          layout="inline"
-        >
-          <Form.Item name="password" style={{ marginBottom: 0 }}>
-            <Input.Password style={{ width: 120 }} />
-          </Form.Item>
-          <Button htmlType="submit" type="link">Update</Button>
-        </Form>
-      ),
+      render: () => '••••••••' // Hide actual password
     },
     {
       title: 'Actions',
       render: (_, record) => (
         <Space>
-          <Button type="primary" onClick={() => openActivityModal(record.username)}>Logs</Button>
-          <Button danger onClick={() => deleteUser(record.username)}>Delete</Button>
+          <Button onClick={() => openEditPasswordModal(record)}>Edit Password</Button>
+          <Button onClick={() => openActivityModal(record.username)}>Logs</Button>
+          <Popconfirm
+            title={`Delete user "${record.username}"?`}
+            onConfirm={() => deleteUser(record.username)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button danger>Delete</Button>
+          </Popconfirm>
         </Space>
-      ),
-    },
+      )
+    }
   ];
-
-  const openActivityModal = (username) => {
-    setEditingUser({ username });
-    setActivityLogs(getActivityLogs(username));
-  };
 
   return (
     <div style={{ padding: '2rem' }}>
@@ -103,7 +128,12 @@ const Users = () => {
         style={{ marginBottom: 16, width: 300 }}
       />
 
-      <Button danger onClick={bulkDelete} disabled={!selectedRowKeys.length} style={{ marginLeft: 16 }}>
+      <Button
+        danger
+        onClick={bulkDelete}
+        disabled={!selectedRowKeys.length}
+        style={{ marginLeft: 16 }}
+      >
         Delete Selected
       </Button>
 
@@ -114,20 +144,40 @@ const Users = () => {
         pagination={{ pageSize: 5 }}
         rowSelection={{
           selectedRowKeys,
-          onChange: setSelectedRowKeys,
+          onChange: setSelectedRowKeys
         }}
       />
 
+      {/* Activity Logs Modal */}
       <Modal
-        open={!!editingUser?.username && activityLogs.length > 0}
-        onCancel={() => setEditingUser(null)}
+        open={!!logModalUser}
+        onCancel={() => setLogModalUser(null)}
         footer={null}
-        title={`Activity Logs - ${editingUser?.username}`}
+        title={`Activity Logs - ${logModalUser}`}
       >
         <List
           dataSource={activityLogs}
           renderItem={(log, index) => <List.Item key={index}>{log}</List.Item>}
         />
+      </Modal>
+
+      {/* Edit Password Modal */}
+      <Modal
+        open={!!editPasswordUser}
+        onCancel={() => setEditPasswordUser(null)}
+        onOk={handlePasswordUpdate}
+        title={`Update Password - ${editPasswordUser?.username}`}
+        okText="Update Password"
+      >
+        <Form form={passwordForm} layout="vertical">
+          <Form.Item
+            name="newPassword"
+            label="New Password"
+            rules={[{ required: true, message: 'Please enter a new password' }]}
+          >
+            <Input.Password />
+          </Form.Item>
+        </Form>
       </Modal>
     </div>
   );
