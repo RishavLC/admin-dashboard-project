@@ -10,25 +10,35 @@ const Login = ({ setIsAuthenticated }) => {
   const navigate = useNavigate();
 
   const handleLogin = ({ username, password, role }) => {
-    setLoading(true);
-    setTimeout(() => {
-      const storedPassword = localStorage.getItem(`user_${username}`);
-      const isAdmin = role === 'admin' && username === 'admin' && password === 'admin123';
-      const isUser = role === 'user' && storedPassword === password;
+  setLoading(true);
+  setTimeout(() => {
+    const userData = localStorage.getItem(`user_${username}`);
+    const isAdmin = role === 'admin' && username === 'admin' && password === 'admin123';
+    
+    let isUser = false;
 
-      if (isAdmin || isUser) {
-        localStorage.setItem('auth', 'true');
-        localStorage.setItem('role', role);
-        localStorage.setItem('username', username);
-        setIsAuthenticated(true);
-        navigate(role === 'admin' ? '/admin-dashboard' : '/user-dashboard');
-      } else {
-        alert('Invalid credentials');
+    if (role === 'user' && userData) {
+      try {
+        const parsedUser = JSON.parse(userData);
+        isUser = parsedUser.password === password;
+      } catch (err) {
+        console.error('Invalid user data in localStorage');
       }
+    }
 
-      setLoading(false);
-    }, 1000);
-  };
+    if (isAdmin || isUser) {
+      localStorage.setItem('auth', 'true');
+      localStorage.setItem('role', role);
+      localStorage.setItem('username', username);
+      setIsAuthenticated(true);
+      navigate(role === 'admin' ? '/admin-dashboard' : '/user-dashboard');
+    } else {
+      alert('Invalid credentials');
+    }
+
+    setLoading(false);
+  }, 1000);
+};
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
