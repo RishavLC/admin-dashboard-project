@@ -6,16 +6,39 @@ const Booking = () => {
   const username = localStorage.getItem('username');
 
   const onFinish = (values) => {
-    const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-    const newBooking = {
-      ...values,
-      username,
-      date: new Date().toISOString().split('T')[0]
-    };
-    bookings.push(newBooking);
-    localStorage.setItem('bookings', JSON.stringify(bookings));
-    message.success('Booking successful!');
+  const username = localStorage.getItem('username');
+  const newBooking = {
+    ...values,
+    username,
+    date: new Date().toISOString().split('T')[0],
   };
+
+  // Save to global bookings
+  const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+  bookings.push(newBooking);
+  localStorage.setItem('bookings', JSON.stringify(bookings));
+
+  // Update user data
+  const userKey = `user_${username}`;
+  const user = JSON.parse(localStorage.getItem(userKey));
+  const updatedBookings = user.bookings ? [...user.bookings, newBooking] : [newBooking];
+  const totalSpent = updatedBookings.reduce((sum, b) => sum + parseFloat(b.amount), 0);
+
+  const updatedUser = {
+    ...user,
+    bookings: updatedBookings,
+    totalSpent,
+  };
+
+  localStorage.setItem(userKey, JSON.stringify(updatedUser));
+
+  // Optional: Update logged-in session
+  if (username === localStorage.getItem('username')) {
+    localStorage.setItem('auth', JSON.stringify(updatedUser));
+  }
+
+  message.success('Booking successful!');
+};
 
   return (
     <Card title="Book a Hotel" style={{ margin: 20 }}>

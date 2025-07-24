@@ -17,25 +17,20 @@ const UserDashboard = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const username = localStorage.getItem('username');
-    if (!username) {
-      message.error('User not logged in!');
-      navigate('/login');
-      return;
-    }
-    try {
-      const storedUser = JSON.parse(localStorage.getItem(`user_${username}`));
-      if (!storedUser) {
-        message.error('User data not found!');
-        navigate('/login');
-        return;
-      }
-      setUser(storedUser);
-    } catch (error) {
-      message.error('Failed to load user data.');
-      navigate('/login');
-    }
-  }, [navigate]);
+  const username = localStorage.getItem('username');
+  if (!username) {
+    message.error('User not logged in!');
+    navigate('/login');
+    return;
+  }
+  const interval = setInterval(() => {
+    const user = JSON.parse(localStorage.getItem(`user_${username}`));
+    if (user) setUser(user);
+  }, 1000); // refresh every second
+
+  return () => clearInterval(interval);
+}, [navigate]);
+
 
   const handleLogout = () => {
     localStorage.removeItem('auth');
