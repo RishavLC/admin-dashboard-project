@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Input, Button, Typography, Card, Select } from 'antd';
-
+import logAction from './pages/LogAction'; // adjust path if needed
 const { Title } = Typography;
 const { Option } = Select;
 
@@ -31,6 +31,10 @@ const Login = ({ setIsAuthenticated }) => {
       localStorage.setItem('role', role);
       localStorage.setItem('username', username);
       setIsAuthenticated(true);
+
+      // ✅ log action after successful login
+      logAction(username, 'Logged In');
+
       navigate(role === 'admin' ? '/admin-dashboard' : '/user-dashboard');
     } else {
       alert('Invalid credentials');
