@@ -7,6 +7,13 @@ const Register = () => {
   const navigate = useNavigate();
 
   const handleRegister = ({ username, password }) => {
+    username = username.trim(); // Remove leading/trailing spaces
+
+    if (!username || !password) {
+      alert('Username and password are required');
+      return;
+    }
+
     if (localStorage.getItem(`user_${username}`)) {
       alert('User already exists');
     } else {
@@ -36,7 +43,10 @@ const Register = () => {
           <Form.Item
             name="password"
             label="Password"
-            rules={[{ required: true, message: 'Password is required' }]}
+            rules={[
+              { required: true, message: 'Password is required' },
+              { min: 4, message: 'Password must be at least 4 characters' },
+            ]}
           >
             <Input.Password placeholder="Enter password" />
           </Form.Item>
