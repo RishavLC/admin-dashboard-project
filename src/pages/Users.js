@@ -1,24 +1,27 @@
-import React, { useEffect, useState } from 'react';
-import { Table, Button, Input, Modal, message } from 'antd';
+import React, { useEffect, useState } from "react";
+import { Table, Button, Input, Modal, message } from "antd";
 
 const User = () => {
   const [users, setUsers] = useState([]);
   const [editingUser, setEditingUser] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editedData, setEditedData] = useState({ username: '', password: '' });
+  const [editedData, setEditedData] = useState({ username: "" });
 
   useEffect(() => {
+    loadUsers();
+  }, []);
+
+  const loadUsers = () => {
     const userList = [];
     for (let key in localStorage) {
-      if (key.startsWith('user_')) {
+      if (key.startsWith("user_")) {
         try {
           const userData = JSON.parse(localStorage.getItem(key));
           userList.push({
             key,
             username: userData.username,
-            password: userData.password,
             bookings: userData.bookings || [],
-            totalSpent: userData.totalSpent || 0
+            totalSpent: userData.totalSpent || 0,
           });
         } catch (err) {
           console.warn(`Skipping corrupted user: ${key}`);
@@ -26,11 +29,11 @@ const User = () => {
       }
     }
     setUsers(userList);
-  }, []);
+  };
 
   const showEditModal = (record) => {
     setEditingUser(record);
-    setEditedData({ username: record.username, password: record.password });
+    setEditedData({ username: record.username });
     setIsModalVisible(true);
   };
 
@@ -38,61 +41,80 @@ const User = () => {
     const oldKey = editingUser.key;
     const newKey = `user_${editedData.username}`;
 
+    const oldData = JSON.parse(localStorage.getItem(oldKey));
     const updatedUser = {
+      ...oldData,
       username: editedData.username,
-      password: editedData.password,
-      bookings: editingUser.bookings,
-      totalSpent: editingUser.totalSpent
     };
 
-    // Delete old key if username changed
     if (oldKey !== newKey) {
       localStorage.removeItem(oldKey);
     }
 
-    // Save updated data
     localStorage.setItem(newKey, JSON.stringify(updatedUser));
-    message.success('User updated successfully!');
+    message.success("User updated successfully!");
 
-    // Refresh table
-    const updatedUsers = users.map((user) =>
-      user.key === oldKey
-        ? { ...user, ...updatedUser, key: newKey }
-        : user
-    );
-    setUsers(updatedUsers);
-
+    loadUsers();
     setIsModalVisible(false);
     setEditingUser(null);
   };
 
+  const removeUser = (username) => {
+    // Mark as removed
+    const removed = JSON.parse(localStorage.getItem("removed_users") || "[]");
+    if (!removed.includes(username)) {
+      removed.push(username);
+      localStorage.setItem("removed_users", JSON.stringify(removed));
+    }
+
+    // Delete stored user data
+    localStorage.removeItem(`user_${username}`);
+
+    // Optional: Show message and refresh UI
+    message.warning(`${username} has been removed by admin.`);
+    loadUsers(); // If you have a user list reloader
+  };
+
   const columns = [
     {
-      title: 'Username',
-      dataIndex: 'username'
+      title: "Username",
+      dataIndex: "username",
     },
     {
-      title: 'Password',
-      dataIndex: 'password',
-      render: (text) => <span>{text}</span>
+      title: "Total Bookings",
+      dataIndex: "bookings",
+      render: (bookings) => bookings?.length || 0,
     },
     {
-      title: 'Total Bookings',
-      dataIndex: 'bookings',
-      render: (bookings) => bookings?.length || 0
+      title: "Total Spent",
+      dataIndex: "totalSpent",
     },
     {
-      title: 'Total Spent',
-      dataIndex: 'totalSpent'
-    },
-    {
-      title: 'Action',
+      title: "Action",
       render: (_, record) => (
-        <Button type="link" onClick={() => showEditModal(record)}>
-          Edit
-        </Button>
-      )
-    }
+        <>
+          <Button type="link" onClick={() => showEditModal(record)}>
+            Edit
+          </Button>
+          <Button
+            type="link"
+            danger
+            onClick={() => {
+              Modal.confirm({
+                title: `Are you sure you want to remove ${record.username}?`,
+                content: "This action cannot be undone.",
+                okText: "Yes, remove",
+                okType: "danger",
+                cancelText: "Cancel",
+                onOk: () => removeUser(record.username),
+              });
+            }}
+          >
+            Delete
+          </Button>
+        </>
+      ),
+    },
   ];
 
   return (
@@ -101,7 +123,7 @@ const User = () => {
       <Table columns={columns} dataSource={users} pagination={false} />
 
       <Modal
-        title="Edit User"
+        title="Edit Username"
         open={isModalVisible}
         onOk={handleUpdate}
         onCancel={() => setIsModalVisible(false)}
@@ -109,13 +131,10 @@ const User = () => {
         <Input
           style={{ marginBottom: 10 }}
           value={editedData.username}
-          onChange={(e) => setEditedData({ ...editedData, username: e.target.value })}
+          onChange={(e) =>
+            setEditedData({ ...editedData, username: e.target.value })
+          }
           placeholder="Username"
-        />
-        <Input
-          value={editedData.password}
-          onChange={(e) => setEditedData({ ...editedData, password: e.target.value })}
-          placeholder="Password"
         />
       </Modal>
     </div>

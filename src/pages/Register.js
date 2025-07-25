@@ -25,6 +25,11 @@ const Register = () => {
       };
       localStorage.setItem(`user_${username}`, JSON.stringify(userData));
 
+      // ✅ Remove from removed_users list
+      const removed = JSON.parse(localStorage.getItem("removed_users") || "[]");
+      const updated = removed.filter((name) => name !== username);
+      localStorage.setItem("removed_users", JSON.stringify(updated));
+
       alert("Registration successful! Please login.");
       navigate("/login");
     }
