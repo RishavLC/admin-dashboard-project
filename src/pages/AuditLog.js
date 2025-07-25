@@ -5,22 +5,20 @@ const AuditLog = () => {
   const [searchText, setSearchText] = useState('');
   const [logs, setLogs] = useState([]);
 
-  // Load logs from localStorage when component mounts
   useEffect(() => {
-    const storedLogs = JSON.parse(localStorage.getItem('auditLogs') || '[]');
+    const storedLogs = JSON.parse(localStorage.getItem('auditLogs')) || [];
     setLogs(storedLogs);
   }, []);
 
-  // Filter logs based on search
   const filteredLogs = logs.filter(log =>
-    log.action.toLowerCase().includes(searchText.toLowerCase()) ||
-    log.user.toLowerCase().includes(searchText.toLowerCase())
+    log.user.toLowerCase().includes(searchText.toLowerCase()) ||
+    log.action.toLowerCase().includes(searchText.toLowerCase())
   );
 
   const columns = [
     { title: 'Date', dataIndex: 'date', key: 'date' },
     { title: 'User', dataIndex: 'user', key: 'user' },
-    { title: 'Action', dataIndex: 'action', key: 'action' },
+    { title: 'Action', dataIndex: 'action', key: 'action' }
   ];
 
   return (
@@ -31,12 +29,7 @@ const AuditLog = () => {
         style={{ marginBottom: 20, maxWidth: 300 }}
         allowClear
       />
-      <Table
-        columns={columns}
-        dataSource={filteredLogs}
-        pagination={{ pageSize: 5 }}
-        rowKey="key"
-      />
+      <Table columns={columns} dataSource={filteredLogs} pagination={{ pageSize: 5 }} />
     </Card>
   );
 };

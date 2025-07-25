@@ -1,64 +1,103 @@
 import { Card, Row, Col } from 'antd';
-import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, Tooltip, Legend } from 'recharts';
+import {
+  LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
+  XAxis, YAxis, Tooltip, Legend
+} from 'recharts';
+import { useEffect, useState } from 'react';
+import dayjs from 'dayjs'; // Ensure installed: npm install dayjs
 
-const bookingsData = [
-  { month: 'Jan', bookings: 120 },
-  { month: 'Feb', bookings: 200 },
-  { month: 'Mar', bookings: 180 },
-  { month: 'Apr', bookings: 250 },
-];
+const AdminDashboard = () => {
+  const [bookingsData, setBookingsData] = useState([]);
+  const [revenueData, setRevenueData] = useState([]);
+  const [serviceDistribution, setServiceDistribution] = useState([]);
 
-const revenueData = [
-  { service: 'Hotel', revenue: 5000 },
-  { service: 'Flight', revenue: 7000 },
-  { service: 'Tour', revenue: 3000 },
-];
+  useEffect(() => {
+    const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+    console.log("Loaded bookings:", bookings);
 
-const serviceDistribution = [
-  { name: 'Hotel', value: 40 },
-  { name: 'Flight', value: 35 },
-  { name: 'Tour', value: 25 },
-];
+    const monthly = {};
+    const revenue = {};
+    const categoryCount = {};
 
-const AdminDashboard = () => (
-  <div>
-    <Row gutter={16}>
-      <Col span={12}>
-        <Card title="Booking Trends">
-          <LineChart width={400} height={250} data={bookingsData}>
-            <XAxis dataKey="month" />
-            <YAxis />
-            <Tooltip />
-            <Line type="monotone" dataKey="bookings" stroke="#8884d8" />
-          </LineChart>
-        </Card>
-      </Col>
-      <Col span={12}>
-        <Card title="Revenue per Service">
-          <BarChart width={400} height={250} data={revenueData}>
-            <XAxis dataKey="service" />
-            <YAxis />
-            <Tooltip />
-            <Bar dataKey="revenue" fill="#82ca9d" />
-          </BarChart>
-        </Card>
-      </Col>
-    </Row>
-    <Row gutter={16} style={{ marginTop: 20 }}>
-      <Col span={12}>
-        <Card title="Booking Distribution">
-          <PieChart width={400} height={250}>
-            <Pie data={serviceDistribution} dataKey="value" cx="50%" cy="50%" outerRadius={80} label>
-              {serviceDistribution.map((_, index) => (
-                <Cell key={index} fill={['#0088FE', '#00C49F', '#FFBB28'][index % 3]} />
-              ))}
-            </Pie>
-            <Tooltip />
-          </PieChart>
-        </Card>
-      </Col>
-    </Row>
-  </div>
-);
+    bookings.forEach((b) => {
+      const rawDate = b.date || b.bookingDate || new Date().toISOString(); // fallback date
+      const month = dayjs(rawDate).format('MMM');
+      const category = b.category || b.service || 'Other';
+      const amount = parseFloat(b.amount || 0);
+
+      // Bookings per month
+      monthly[month] = (monthly[month] || 0) + 1;
+
+      // Revenue per category
+      revenue[category] = (revenue[category] || 0) + amount;
+
+      // Count per category
+      categoryCount[category] = (categoryCount[category] || 0) + 1;
+    });
+
+    // Sorting months (optional)
+    const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const sortedMonthly = monthOrder
+      .filter(m => monthly[m])
+      .map(m => ({ month: m, bookings: monthly[m] }));
+
+    setBookingsData(sortedMonthly);
+    setRevenueData(Object.entries(revenue).map(([service, revenue]) => ({ service, revenue })));
+    setServiceDistribution(Object.entries(categoryCount).map(([name, value]) => ({ name, value })));
+  }, []);
+
+  return (
+    <div>
+      <Row gutter={16}>
+        <Col span={12}>
+          <Card title="Booking Trends">
+            <LineChart width={400} height={250} data={bookingsData}>
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="bookings" stroke="#8884d8" />
+            </LineChart>
+          </Card>
+        </Col>
+
+        <Col span={12}>
+          <Card title="Revenue per Service">
+            <BarChart width={400} height={250} data={revenueData}>
+              <XAxis dataKey="service" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="revenue" fill="#82ca9d" />
+            </BarChart>
+          </Card>
+        </Col>
+      </Row>
+
+      <Row gutter={16} style={{ marginTop: 20 }}>
+        <Col span={12}>
+          <Card title="Booking Distribution">
+            <PieChart width={400} height={250}>
+              <Pie
+                data={serviceDistribution}
+                dataKey="value"
+                cx="50%"
+                cy="50%"
+                outerRadius={80}
+                label
+              >
+                {serviceDistribution.map((_, index) => (
+                  <Cell key={index} fill={['#0088FE', '#00C49F', '#FFBB28'][index % 3]} />
+                ))}
+              </Pie>
+              <Tooltip />
+              <Legend />
+            </PieChart>
+          </Card>
+        </Col>
+      </Row>
+    </div>
+  );
+};
 
 export default AdminDashboard;

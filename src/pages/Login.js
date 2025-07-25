@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Input, Button, Typography, Card, Select } from 'antd';
-import logAction from './pages/LogAction'; // adjust path if needed
+import logAction from '../utils/logAction'; // adjust path if needed
 const { Title } = Typography;
 const { Option } = Select;
 
