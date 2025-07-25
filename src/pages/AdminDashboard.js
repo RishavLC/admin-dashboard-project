@@ -26,7 +26,7 @@ const handleLogout = () => {
           <Menu.Item key="3" icon={<SettingOutlined />}><Link to="/admin-dashboard/config">Configuration</Link></Menu.Item>
           <Menu.Item key="4" icon={<FileSearchOutlined/>}><Link to="/admin-dashboard/audit-log">Audit Log</Link></Menu.Item>
           <Menu.Item key="5" icon={<FileTextOutlined />}><Link to="/admin-dashboard/reports">Reports</Link></Menu.Item>
-          <Menu.Item key="4" icon={<LogoutOutlined />} onClick={handleLogout}>
+          <Menu.Item key="6" icon={<LogoutOutlined />} onClick={handleLogout}>
             Logout
           </Menu.Item>
         </Menu>

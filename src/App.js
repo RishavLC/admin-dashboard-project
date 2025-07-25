@@ -16,7 +16,7 @@ import Config from "./pages/Config";
 import AuditLog from "./pages/AuditLog";
 import Reports from "./pages/Reports";
 import Booking from "./pages/Booking";
-
+import UserConfigView from "./pages/UserConfigView";
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(
     () => localStorage.getItem("auth") === "true"
@@ -62,6 +62,8 @@ export default function App() {
         >
           <Route path="profile" element={<Profile />} />
           <Route path="booking" element={<Booking />} />
+          <Route path="config-view" element={<UserConfigView />} />
+
         </Route>
 
       </Routes>

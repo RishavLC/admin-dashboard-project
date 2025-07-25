@@ -4,7 +4,8 @@ import {
   BookOutlined,
   ProfileOutlined,
   LogoutOutlined,
-  UserOutlined
+  UserOutlined,
+  SettingOutlined
 } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, Outlet, useLocation } from 'react-router-dom';
@@ -64,7 +65,11 @@ const UserDashboard = () => {
           <Menu.Item key="3" icon={<ProfileOutlined />}>
             <Link to="/user-dashboard/profile">My Profile</Link>
           </Menu.Item>
-          <Menu.Item key="4" icon={<LogoutOutlined />} onClick={handleLogout}>
+          <Menu.Item key="4" icon={<SettingOutlined />}>
+  <Link to="/user-dashboard/config-view">Booking Info</Link>
+</Menu.Item>
+
+          <Menu.Item key="5" icon={<LogoutOutlined />} onClick={handleLogout}>
             Logout
           </Menu.Item>
         </Menu>
